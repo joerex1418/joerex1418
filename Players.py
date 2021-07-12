@@ -9,6 +9,7 @@ import pandas as pd
 from requests.api import head
 from unidecode import unidecode as uc
 from datetime import datetime as dt
+# import urllib.request
 
 #%%
 class Players:
@@ -35,7 +36,9 @@ class Players:
                 else:
                     inhof = 'not-hof'
                 op_idx = p.text.find('(')
-                index[full_name] = [status,p.text[op_idx+1:-1],inhof,domain+str(p.find('a')['href'])]
+                href = str(p.find('a')['href'])
+                code = href[href.rfind('/')+1:href.rfind('.')]
+                index[full_name] = [status,p.text[op_idx+1:-1],inhof,domain+href,code]
             player_directory[l] = index
 
         self.directory = player_directory
@@ -99,7 +102,6 @@ class Players:
         first_table_title = soup.findAll('h2')[0].text
         
         if 'pitching' in first_table_title.lower(): # if player's primary position is "Pitcher"
-        # if 'pitcher' in pos_area:
             if stats == 'salary':
                 comments = soup.find_all(text=lambda text:isinstance(text,Comment)) # comments identified
                 headings = []
@@ -315,7 +317,6 @@ class Players:
 
 
         else: # if player's primary position is NOT "Pitcher"
-        # else:
             
             if stats == 'batting':
                 thead = soup.find('caption',text='Standard Batting').findNext('thead').findAll('th')
@@ -666,9 +667,26 @@ class Players:
                     pass
         return total
 
-player1 = Players().player
+players = Players()
 
 #%%
+players.player('anthony rizzo',stats='batting')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -676,16 +694,38 @@ player1 = Players().player
 
 
 #%%
-# TESTING
-
+# def playerlinks(pdicts):
+#     links = []
+#     for dic in list(pdicts.values()):
+#         for val in list(dic.values()):
+#             links.append(val[3])
+#     return links
+# def updateplayerimage(plist):
+#     for link in plist:
+#         try:
+#             code = link[link.rfind('/')+1:link.rfind('.')]
+#             req = requests.get(link)
+#             soup = bs(req.content,'lxml')
+#             imglnk = soup.find('div',class_='media-item multiple').find('img')['src']
+#             urllib.request.urlretrieve(imglnk,r"C:\\Users\\joere\\OneDrive\\Desktop\\playerpics\\active\\"+code+".jpg")
+#         except: pass
 
 
 
 
 
 # %%
-# SCRATCH
 
+# %%
+
+# url = 'https://www.baseball-reference.com/players/a/anderti01.shtml'
+# req = requests.get(url)
+# soup = bs(req.content,'lxml')
+# code = 'hello01'
+# img = soup.find('div',class_='media-item multiple').find('img')['src']
+# saveplace = r'C:\\Users\\joere\\OneDrive\\Desktop\\playerpics\\all\\'+code+'.jpg'
+# print(saveplace)
+# urllib.request.urlretrieve(img,saveplace)
 
 
 
