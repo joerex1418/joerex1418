@@ -1,5 +1,6 @@
 #%%
 from logging import getLevelName
+from platform import win32_edition
 from bs4 import BeautifulSoup as bs, element
 from bs4 import Comment
 from numpy import kaiser, record
@@ -14,6 +15,7 @@ from selenium.webdriver.chrome.options import Options
 # from selenium.webdriver.common.by import By
 # from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import time
 
 from sys import platform
 if platform == 'darwin':
@@ -28,6 +30,11 @@ elif platform == 'linux' or platform == 'linux2':
     useros = 'linux'
 else:
     useros = 'idk'
+todayobj = dt.datetime.today()
+yestobj = todayobj - dt.timedelta(days=1)
+today = dt.datetime.strftime(todayobj,'%Y-%m-%d')
+yesterday = dt.datetime.strftime(yestobj,'%Y-%m-%d')
+
 
 #%%
 class Scores:
@@ -121,19 +128,24 @@ class Scores:
     def LiveGame(self,query='white sox'):
         try:
             try:
-                gameid = self.geturl(query)
+                gameid = self.liveurl(query)
             except:
                 print('This team may not be playing right now. Try another query')
                 return None
             gameurl = 'https://www.espn.com/mlb/boxscore/_/gameId/'+gameid
             options = Options()
-            options.headless = True
+            options.add_argument('--headless')
+            options.add_argument('--ignore-certificate-errors')
+            options.add_argument('--incognito')
             driver = webdriver.Chrome(executable_path=driverloc,options=options)
-            # driver = webdriver.PhantomJS(executable_path=phantjs)
             driver.get(gameurl)
-            bannerhtml = driver.execute_script("return document.getElementById('gamepackage-matchup-wrap').innerHTML")
-            boxhtml = driver.execute_script("return document.getElementById('gamepackage-box-score').innerHTML")
-            linehtml = driver.execute_script("return document.getElementById('gamepackage-linescore').innerHTML")
+            time.sleep(1)
+            # bannerhtml = driver.execute_script("return document.getElementById('gamepackage-matchup-wrap').innerHTML")
+            # boxhtml = driver.execute_script("return document.getElementById('gamepackage-box-score').innerHTML")
+            # linehtml = driver.execute_script("return document.getElementById('gamepackage-linescore').innerHTML")
+            boxhtml = driver.page_source
+            linehtml = driver.page_source
+            bannerhtml = driver.page_source
             driver.quit()
             soupbox = bs(boxhtml,'lxml')
             soupline = bs(linehtml,'lxml')
@@ -170,7 +182,7 @@ class Scores:
             gamedict['AwayScoring'] = awayrow
             gamedict['HomeScoring'] = homerow
             
-            if 'top' in inn or 'bottom' in inn.lower():
+            if 'top' in inn.lower() or 'bottom' in inn.lower():
                 try:
                     pitching = soupline.find('span',text='Pitcher').findNext('span',class_='fullName').text
                     atbat = soupline.find('span',text='Batter').findNext('span',class_='fullName').text
@@ -372,8 +384,138 @@ class Scores:
                 pass
                 print('ERROR in 1st Try Block')
                 return None
+
+    def Results(self,query=None,datein=today):
+        datein = datein.replace('-','')
+        gamelinks = self.geturls(datein=datein)
+        if query == None:
+            links = []
+            for key,val in list(gamelinks.items()):
+                if 'FINAL' in key:
+                    links.append(val)
+                else:
+                    pass
+            return links
+        else:
+            for key,val in list(gamelinks.items()):
+                if query.lower() in key.lower():
+                    link = val
+        gameurl = link
+        options = Options()
+        options.headless = True
+        options.add_argument('--ignore-certificate-errors')
+        options.add_argument('--incognito')
+        driver = webdriver.Chrome(executable_path=driverloc,options=options)
+        driver.get(gameurl)
+        html = driver.execute_script("return document.getElementById('gamepackage-box-score').innerHTML")
+        # time.sleep(1)
+        # html = driver.page_source
+        driver.quit()
+        sesh = requests.Session()
+        req = sesh.get(gameurl)
+        soup = bs(req.content,'lxml')
+        linescore = soup.find('table',class_='linescore__table')
+        headers = []
+        awayrow = []
+        homerow = []
+
+        for td in linescore.find('thead').findAll('td')[1:]:
+            headers.append(td.text.strip())
+        for td in linescore.findAll('tbody')[0].findAll('td')[1:]:
+            awayrow.append(td.text.strip())
+        for td in linescore.findAll('tbody')[1].findAll('td')[1:]:
+            homerow.append(td.text.strip())
+
+
+        win = soup.find('span',text='WIN').findNext('span').find('span',class_='fullName').text
+        loss = soup.find('span',text='LOSS').findNext('span').find('span',class_='fullName').text
+
+
+        away = soup.find('div',class_='boxscore-2017__wrap boxscore-2017__wrap--away')
+        awayteam = soup.find('div',class_='team away').find('span',class_='short-name').text
+        awayhit = away.find('table',attrs={'data-type':'batting'}).findAll('tbody')[:-1]
+        awaypit = away.find('table',attrs={'data-type':'pitching'}).findAll('tbody')[:-1]
+
+        hitheaders = ['Pos']
+        hithead = away.find('thead').findAll('th')[1:]
+        for i in hithead:
+            hitheaders.append(i.text)
+        pitheaders = ['--']
+        pithead = away.find('th',text='Pitchers').findParent('thead').findAll('th')[1:]
+        for i in pithead:
+            pitheaders.append(i.text)
+
+        awayhitting = {}
+        awaypitching = {}
+        for tbody in awayhit:
+            namelink = tbody.find('td',class_='name').find('a')['href']
+            req = requests.get(namelink)
+            soup = bs(req.content,'lxml')
+            name = soup.find('title').text
+            name = name[:name.find('Stats')].strip()
+            stats = []
+            stats.append(tbody.find('td',class_='name').find('a').next_sibling)
+            for td in tbody.findAll('td')[1:]:
+                stats.append(td.text)
+            awayhitting[name] = stats
+        for tbody in awaypit:
+            namelink = tbody.find('td',class_='name').find('a')['href']
+            req = requests.get(namelink)
+            soup = bs(req.content,'lxml')
+            name = soup.find('title').text
+            name = name[:name.find('Stats')].strip()
+            stats = []
+            try:stats.append(tbody.find('td',class_='name').find('a').next_sibling.strip())
+            except:stats.append('')
+            for td in tbody.findAll('td')[1:]:
+                stats.append(td.text)
+            awaypitching[name] = stats
+            
+        
+        soup = bs(html,'lxml')
+        home = soup.find('div',class_='boxscore-2017__wrap boxscore-2017__wrap--home')
+        hometeam = home.find('div',class_='boxscore-2017__team-name').text[:-8]
+        homehit = home.find('table',attrs={'data-type':'batting'}).findAll('tbody')[:-1]
+        homepit = home.find('table',attrs={'data-type':'pitching'}).findAll('tbody')[:-1]
+
+        homehitting = {}
+        homepitching = {}
+        for tbody in homehit:
+            namelink = tbody.find('td',class_='name').find('a')['href']
+            req = requests.get(namelink)
+            soup = bs(req.content,'lxml')
+            name = soup.find('title').text
+            name = name[:name.find('Stats')].strip()
+            stats = []
+            stats.append(tbody.find('td',class_='name').find('a').next_sibling)
+            for td in tbody.findAll('td')[1:]:
+                stats.append(td.text)
+            homehitting[name] = stats
+        for tbody in homepit:
+            namelink = tbody.find('td',class_='name').find('a')['href']
+            req = requests.get(namelink)
+            soup = bs(req.content,'lxml')
+            name = soup.find('title').text
+            name = name[:name.find('Stats')].strip()
+            stats = []
+            try:stats.append(tbody.find('td',class_='name').find('a').next_sibling.strip())
+            except:stats.append('')
+            for td in tbody.findAll('td')[1:]:
+                stats.append(td.text)
+            homepitching[name] = stats
+        
+        results_dict = {'AwayTeam':awayteam,
+                        'HomeTeam':hometeam,
+                        'InnColumns':headers,
+                        'AwayScoring':awayrow,
+                        'HomeScoring':homerow,
+                        'AwayHitting':awayhitting,
+                        'AwayPitching':awaypitching,
+                        'HomeHitting':homehitting,
+                        'HomePitching':homepitching}
+        return results_dict
     
-    def geturl(self,query):
+    def liveurl(self,query):
         gamesurl = 'https://www.espn.com/mlb/scoreboard'
         options = Options()
         options.headless = True
@@ -400,10 +542,12 @@ class Scores:
                 pass
         return None
     
-    def geturls(self,datein=dt.datetime.strftime(dt.datetime.today(),'%Y-%m-%d')):
+    def geturls(self,datein=today):
         gamesurl = 'https://www.espn.com/mlb/scoreboard/_/date/'+datein
         options = Options()
         options.headless = True
+        options.add_argument('--ignore-certificate-errors')
+        options.add_argument('--incognito')
         driver = webdriver.Chrome(executable_path=driverloc,options=options)
         driver.get(gamesurl)
         html = driver.execute_script("return document.getElementById('events').innerHTML")
@@ -427,22 +571,30 @@ class Scores:
                 pass
         return gamelinks
 
-
-    def Results(self,query=None):
-        gamelinks = self.geturls()
-        if query == None:
-            links = []
-            for key,val in list(gamelinks.items()):
-                if 'FINAL' in key:
-                    links.append(val)
-                else:
-                    pass
-            return links
-        else:
-            for key,val in list(gamelinks.items()):
-                if query.lower() in key.lower():
-                    print(val)
-                    link = val
+    def getids(self,datein=today):
+        datein = datein.replace('-','')
+        url = 'https://www.espn.com/mlb/scoreboard/_/date/'+datein
+        options = Options()
+        options.add_argument('--headless')
+        options.add_argument('--ignore-certificate-errors')
+        options.add_argument('--incognito')
+        driver = webdriver.Chrome(executable_path=driverloc,options=options)
+        driver.get(url)
+        time.sleep(1)
+        html = driver.page_source
+        driver.quit()
+        soup = bs(html,'lxml')
+        articles = soup.find('div',id='events').findAll('article')
+        gameid_dict = {}
+        for article in articles:
+            away = article.findAll('span',class_='sb-team-short')[0].text
+            home = article.findAll('span',class_='sb-team-short')[1].text
+            # if 'live' in ' '.join(article['class']).lower():
+            #     gameid_dict['']
+            gameid_dict[away+' at '+home] = article['id']
+        print(gameid_dict)
+    
+                    
 
 
         
@@ -450,38 +602,11 @@ scores = Scores()
 
 
 #%%
-scores.Results('white sox')
-
-
 
 
 
 
 # %%
-req = requests.get('https://www.espn.com/mlb/boxscore/_/gameId/401228344')
-soup = bs(req.content,'lxml')
-
-linescore = soup.find('table',class_='linescore__table')
-headers = []
-awayscore = []
-homescore = []
-
-
-
-
-
-away = soup.find('div',class_='boxscore-2017__wrap boxscore-2017__wrap--away')
-awayhit = away.find('table',attrs={'data-type':'batting'})
-awaypit = away.find('table',attrs={'data-type':'pitching'})
-for tbody in awaypit.findAll('tbody'):
-    print(tbody.text)
-
-home = soup.find('div',class_='boxscore-2017__wrap boxscore-2017__wrap--home')
-homehit = home.find('table',attrs={'data-type':'batting'})
-homepit = home.find('table',attrs={'data-type':'pitching'})
-for tbody in homepit.findAll('tbody'):
-    print(tbody.text)
-
 
 
 
