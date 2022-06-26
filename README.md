@@ -2,7 +2,7 @@
 **joerex1418/joerex1418** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 -->
 
-### Greetings! I'm Joe!
+### Hi, I'm Joe!
 
 My programming language experience includes Python (my first!), JavaScript, and most recently Swift. I also dabble in HTML & CSS.
 At some point, I'd love to learn Rust, Go, and maybe C++
