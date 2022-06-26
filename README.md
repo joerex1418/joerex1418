@@ -2,9 +2,9 @@
 **joerex1418/joerex1418** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 -->
 
-### Greetings!
+### Greetings! I'm Joe!
 
-Programming language experience includes Python (my first!), JavaScript, and most recently Swift. I also dabble in HTML & CSS.
+My programming language experience includes Python (my first!), JavaScript, and most recently Swift. I also dabble in HTML & CSS.
 At some point, I'd love to learn Rust, Go, and maybe C++
 
 I'm also a sucker for projects where I get to automate workflows in every-day tasks (generating spreadsheets, fetching relevant data through HTTP requests). I'm also fascinated by the concept of UI designs and aesthetics. Nothing I love more than finding an awesome API and making a new web app out of it. I usually have leaned on Python and the Flask framework for these kinds of projects.
