@@ -3,8 +3,6 @@
 -->
 
 # Hi, I'm Joe!
-<span style="font-size: 12px">Hi, I'm Joe!</span>
-<span style="font-size: 18px">Hi, I'm Joe!</span>
 ## Known Languages
 * Python
 * JavaScript
