@@ -1,7 +1,7 @@
 <!--
 **joerex1418/joerex1418** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 -->
-
+&#9658;
 ### Hi, I'm Joe!
 
 My programming language experience includes Python (my first!), JavaScript, and most recently Swift. I also dabble in HTML & CSS.
