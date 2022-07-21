@@ -11,11 +11,11 @@
 * Swift (currently learning)
 * Rust (currently learning)
 
+### Would LIKE to learn
+* C++
+* Go
 
-My programming language experience includes Python (my first!), JavaScript, and most recently Swift. I also dabble in HTML & CSS.
-At some point, I'd love to learn Rust, Go, and maybe C++
-
-I'm also a sucker for projects where I get to automate workflows in every-day tasks (generating spreadsheets, fetching relevant data through HTTP requests). I'm also fascinated by the concept of UI designs and aesthetics. Nothing I love more than finding an awesome API and making a new web app out of it. I usually have leaned on Python and the Flask framework for these kinds of projects.
+I'm a sucker for projects where I get to automate workflows in every-day tasks (generating spreadsheets, fetching relevant data through HTTP requests). I'm also fascinated by the concept of UI designs and aesthetics. Nothing I love more than finding an awesome API and making a new web app out of it. I usually have leaned on Python and the Flask framework for these kinds of projects.
 
 Personal projects that I love working on include:
 - simplestats-mlb
