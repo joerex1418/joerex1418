@@ -11,6 +11,7 @@
 * CSS
 * Swift (currently learning)
 * Rust (currently learning)
+<span style="font-family:Papyrus; font-size:4em;">LOVE!</span>
 
 
 My programming language experience includes Python (my first!), JavaScript, and most recently Swift. I also dabble in HTML & CSS.
