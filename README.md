@@ -5,7 +5,12 @@
 ### Hi, I'm Joe!
 
 ## Known Languages
-:snake: Python
+* Python
+* JavaScript
+* HTML
+* CSS
+* Swift (currently learning)
+* Rust (currently learning)
 
 
 My programming language experience includes Python (my first!), JavaScript, and most recently Swift. I also dabble in HTML & CSS.
