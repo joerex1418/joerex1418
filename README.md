@@ -3,7 +3,7 @@
 -->
 
 # Hi, I'm Joe!
-## Known Languages
+### Known Languages
 * Python
 * JavaScript
 * HTML
