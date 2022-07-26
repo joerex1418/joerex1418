@@ -8,7 +8,7 @@
 * JavaScript
 * HTML
 * CSS
-* Swift (currently learning)
+* Swift
 * Rust (currently learning)
 
 ### Would LIKE to learn
