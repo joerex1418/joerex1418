@@ -17,11 +17,6 @@
 
 I'm a sucker for projects where I get to automate workflows in every-day tasks (generating spreadsheets, fetching relevant data through HTTP requests). I'm also fascinated by the concept of UI designs and aesthetics. Nothing I love more than finding an awesome API and making a new web app out of it. I usually have leaned on Python and the Flask framework for these kinds of projects.
 
-Personal projects that I love working on include:
-- simplestats-mlb
-- cta
-- metra
-
 Right now, I'm most involved with learning Rust and developing some iOS apps with Swift
 
 - 📫 How to reach me: joe.rechenmacher@gmail.com
