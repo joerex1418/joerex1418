@@ -2,7 +2,6 @@
 **joerex1418/joerex1418** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 -->
 
-# Hi, I'm Joe!
 ### Known Languages
 * Python
 * JavaScript
