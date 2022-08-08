@@ -8,9 +8,9 @@
 * HTML
 * CSS
 * Swift
-* Rust (currently learning)
+* Rust
 
-### Would LIKE to learn
+### Learning Wish List
 * C++
 * Go
 
