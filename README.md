@@ -3,15 +3,12 @@
 -->
 
 ### Known Languages
-* Python
-* JavaScript
-* HTML
-* CSS
-* Swift
-* Rust
+* Python, Rust
+* HTML, CSS, JavaScript
+* Mobile (iOS): Swift/SwiftUI
+* SQL
 
 ### Learning Wish List
-* Django Framework
 * C#
 * C++
 
